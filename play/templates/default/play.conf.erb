@@ -1,0 +1,2 @@
+# Application options
+APP_OPTS='<% if @app_opts && !@app_opts.empty? -%><% @app_opts.each do |opName, opValue| %><%= "-D#{opName}=#{opValue} " %> <% end %><% end -%>'

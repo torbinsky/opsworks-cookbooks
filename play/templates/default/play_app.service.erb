@@ -1,0 +1,89 @@
+#!/bin/bash
+#
+# Copyright (c) 2013 Torben Werner
+# All rights reserved.
+#
+# playapp        Daemon script for a Play! application
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+prog=playapp
+procident=<%= node[:play][:app][:proc_ident] %>
+PIDFILE="/var/run/$procident.pid"
+LOCKFILE=/var/lock/subsys/$procident
+PLAY_APP_BIN=<%= node[:play][:app][:bin_path] %>
+
+# Ensure bin file exists
+test -x $PLAY_APP_BIN || { echo "$PLAY_APP_BIN not installed";
+        if [ "$1" = "stop" ]; then exit 0;
+        else exit 5; fi; }
+
+# Ensure config file exists
+config=<%= node[:play][:app][:config_file] %>
+test -r $config || { echo "$config doesn't exist!";
+        if [ "$1" = "stop" ]; then exit 0;
+        else exit 6; fi; }
+
+. $config
+
+
+start() {
+        echo -n "Starting $prog: "
+        if [ -f $LOCKFILE ]; then
+                echo "PlayApp already running: `cat $PIDFILE`"
+                exit 0;
+        else
+                touch $LOCKFILE
+                $PLAY_APP_BIN >/dev/null 2>&1 &
+                RETVAL=$?
+                PID=$!
+                echo $PID > $PIDFILE
+                success $"$prog server startup: $PID"
+                return $RETVAL
+        fi
+}
+
+status() {
+        PID=`ps ax | grep $procident | grep -v grep | awk '{print $1}'`
+        if [ ! -z "$PID" ]; then
+        	echo "PlayApp running under PID $PID"
+        	return 0
+        fi
+        echo "PlayApp is not running"
+        return 1
+}
+
+stop() {
+        echo -n "Stopping $prog: "
+        ps ax | grep $procident | grep -v grep | awk '{print $1}' | xargs kill
+        RETVAL=$?
+        rm -f $LOCKFILE
+        rm -f $PIDFILE
+        if [ $RETVAL -eq 0 ]; then
+                success $"$prog stopped"
+        fi       
+        return $RETVAL
+}
+
+# See how we were called.
+case "$1" in
+  start)
+        start
+        ;;
+  stop)
+        stop
+        ;;
+  status)
+        status
+        ;;
+  restart)
+        stop
+        start
+        ;;
+  *)
+        echo $"Usage: $prog {start|stop|restart}"
+        exit 1
+	;;
+esac
+exit $?

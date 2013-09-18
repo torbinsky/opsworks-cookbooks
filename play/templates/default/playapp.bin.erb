@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+
+CONFIG_FILE=<%= node[:play][:app][:config_file] %>
+
+if [[ -f $CONFIG_FILE ]]; then
+        . $CONFIG_FILE
+fi
+
+<%= @startscript %> -Xms<%= @xms %> -Xmx<%= @xmx %> -Duniquename=<%= node[:play][:app][:proc_ident] %> $APP_OPTS
