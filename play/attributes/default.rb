@@ -20,7 +20,6 @@ default[:play][:dist][:s3][:region] = nil
 default[:play][:dist][:s3][:bucketname] = nil
 default[:play][:dist][:name] = "play-#{node[:play][:dist][:version]}"
 default[:play][:dist][:remote_loc] = "http://downloads.typesafe.com/play/#{node[:play][:dist][:version]}/#{node[:play][:dist][:name]}.zip"
-default[:play][:app][:use_custom_logs] = false
 
 # Detect if a Play! application exists in this OpsWorks stack
 node[:deploy].each do |application, deploy|
