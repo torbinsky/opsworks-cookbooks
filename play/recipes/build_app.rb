@@ -1,10 +1,11 @@
 include_recipe "deploy"
 include_recipe "play"
 
+# Don't build unless we found a Play! application
 if node[:play][:app_found]
   # Get app information
-  deploy = node[:play][:deploy]
   application = node[:play][:application]
+  deploy = node[:deploy][application]
   
   # Get OpsWorks to 'deploy' the application (for example, if the application is in a Git repository, this will clone the repository etc...)
   opsworks_deploy_dir do

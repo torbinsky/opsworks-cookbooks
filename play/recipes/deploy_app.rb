@@ -1,9 +1,11 @@
 include_recipe "deploy"
 include_recipe "play"
 
+# Don't deploy unless we found a Play! app
 if node[:play][:app_found]
-  deploy = node[:play][:deploy]
+  # Get app information
   application = node[:play][:application]
+  deploy = node[:deploy][application]
   
   # Install unzip package
   package "unzip" do
@@ -31,6 +33,7 @@ if node[:play][:app_found]
     
     # move the built app to a location the script knows about (WARNING: rm -rf! careful!!!)
     deployedapp_path=#{deploy[:current_path]}/deployed_app
+    # Probably should come up with a better method to do this...
     rm -rf $deployedapp_path
     mv #{deploy[:current_path]}/dist/$distname $deployedapp_path
     

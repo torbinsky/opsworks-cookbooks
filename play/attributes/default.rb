@@ -6,6 +6,7 @@
 #
 #
 
+default[:play][:app_identifier] = 'play'
 default[:play][:app_found] = false
 default[:play][:dist][:version] = '2.1.3'
 default[:play][:app][:mainclass] = 'play.core.server.NettyServer'
@@ -19,18 +20,19 @@ default[:play][:dist][:s3][:region] = nil
 default[:play][:dist][:s3][:bucketname] = nil
 default[:play][:dist][:name] = "play-#{node[:play][:dist][:version]}"
 default[:play][:dist][:remote_loc] = "http://downloads.typesafe.com/play/#{node[:play][:dist][:version]}/#{node[:play][:dist][:name]}.zip"
+default[:play][:app][:use_custom_logs] = false
 
-
-# Detect if a Play! application exists in this OpsWorks stack  
+# Detect if a Play! application exists in this OpsWorks stack
 node[:deploy].each do |application, deploy|
-  if !node[:play][:app_found] && deploy[:application_type] == "other" && application.start_with?('play')
+  if !node[:play][:app_found] && deploy[:application_type] == "other" && application.start_with?(node[:play][:app_identifier])
     default[:play][:app_found] = true
-    default[:play][:deploy] = deploy
     default[:play][:application] = application
-    break # Only one app per instance is supported right now
+    break # Only one app per instance is supported right now, probably doesn't make sense to do more in most cases anyways
   end
 end
 
+# Assuming the instance is a dedicated app instance we should take most/all the memory for the JVM
+# TODO: Find a 
 default[:play][:jvm][:xms]['t1.micro'] = '64M'
 default[:play][:jvm][:xmx]['t1.micro'] = '256M'
 default[:play][:jvm][:xms]['m1.small'] = '512M'
