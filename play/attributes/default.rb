@@ -6,8 +6,8 @@
 #
 #
 
-default[:play][:app_identifier] = 'play'
-default[:play][:app_found] = false
+default[:play][:app][:identifier] = 'play'
+default[:play][:app][:found] = false
 default[:play][:dist][:version] = '2.1.3'
 default[:play][:app][:mainclass] = 'play.core.server.NettyServer'
 default[:play][:lib_path] = '/usr/local/lib/play'
@@ -23,8 +23,8 @@ default[:play][:dist][:remote_loc] = "http://downloads.typesafe.com/play/#{node[
 
 # Detect if a Play! application exists in this OpsWorks stack
 node[:deploy].each do |application, deploy|
-  if !node[:play][:app_found] && deploy[:application_type] == "other" && application.start_with?(node[:play][:app_identifier])
-    default[:play][:app_found] = true
+  if !node[:play][:app][:found] && deploy[:application_type] == "other" && application.start_with?(node[:play][:app][:identifier])
+    default[:play][:app][:found] = true
     default[:play][:application] = application
     break # Only one app per instance is supported right now, probably doesn't make sense to do more in most cases anyways
   end

@@ -14,7 +14,7 @@ if !File.directory?("#{node[:play][:lib_path]}")
   # Get the packaged Play! distribution 
   if node[:play][:dist][:s3][:enabled]
     # Download Play! from S3 bucket (allows distro customization, direct AWS access, etc...)
-    s3_file "#{Chef::Config[:file_cache_path]}/#{node[:play][:dist][:name]}.zip" do
+    s3_aware_remote_file "#{Chef::Config[:file_cache_path]}/#{node[:play][:dist][:name]}.zip" do
       source "#{node[:play][:dist][:s3][:region]}://#{node[:play][:dist][:s3][:bucketname]}/#{node[:play][:dist][:name]}.zip"
       access_key_id node[:config][:aws][:s3][:access_key]
       secret_access_key node[:config][:aws][:s3][:secret]

@@ -2,7 +2,7 @@ include_recipe "deploy"
 include_recipe "play"
 
 # Don't build unless we found a Play! application
-if node[:play][:app_found]
+if node[:play][:app][:found]
   # Get app information
   application = node[:play][:application]
   deploy = node[:deploy][application]
